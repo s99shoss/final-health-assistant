@@ -4,3 +4,8 @@ requests
 gtts
 tinydb
 HealthcareAgent
+beautifulsoup4
+cachetools
+lxml
+requests
+func_timeout
