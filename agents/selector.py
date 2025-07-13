@@ -19,6 +19,8 @@ def select_agents(query):
         selected.append("symptom")
     if "blood pressure" in query or "record health" in query:
         selected.append("health_data")
+    if "analyze health" in query or "health report" in query:
+        selected.append("health_analytics")
     if not selected:
         selected.append("websearch")
     return selected
