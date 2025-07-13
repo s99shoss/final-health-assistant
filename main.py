@@ -34,7 +34,7 @@ async def handle_query(req: Request):
     if "fitness" in selected:
         responses.append(suggest_fitness(weather_data))
     if "nutrition" in selected:
-        responses.append(get_nutrition_recommendation())
+        responses.append(get_nutrition_recommendation(query))
     if "wellbeing" in selected:
         responses.append(get_wellbeing_tip())
     if "sleep" in selected:
