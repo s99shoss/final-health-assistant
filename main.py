@@ -1,0 +1,48 @@
+from fastapi import FastAPI, Request
+from agents.weather import get_weather
+from agents.fitness import suggest_fitness
+from agents.nutrition import get_nutrition_recommendation
+from agents.wellbeing import get_wellbeing_tip
+from agents.sleep import analyze_sleep
+from agents.reminders import get_reminders
+from agents.calendar import check_calendar
+from agents.websearch import fallback_response
+from agents.selector import select_agents
+from utils.memory import save_log
+from utils.tts import speak
+
+app = FastAPI()
+
+@app.post("/query/")
+async def handle_query(req: Request):
+    data = await req.json()
+    query = data.get("query", "")
+    location = data.get("location", {"lat": 35.7, "lon": 51.4})  # default: Tehran
+
+    selected = select_agents(query)
+    responses = []
+
+    weather_data = None
+    if "weather" in selected:
+        weather_data = get_weather(location["lat"], location["lon"])
+        responses.append(weather_data)
+    if "fitness" in selected:
+        responses.append(suggest_fitness(weather_data))
+    if "nutrition" in selected:
+        responses.append(get_nutrition_recommendation())
+    if "wellbeing" in selected:
+        responses.append(get_wellbeing_tip())
+    if "sleep" in selected:
+        responses.append(analyze_sleep())
+    if "reminders" in selected:
+        responses.append(get_reminders())
+    if "calendar" in selected:
+        responses.append(check_calendar())
+    if "websearch" in selected:
+        responses.append(fallback_response())
+
+    final_response = "\n".join(responses)
+    save_log(query, final_response)
+    speak(final_response)
+
+    return {"response": final_response, "agents_used": selected}
