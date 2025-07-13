@@ -1,35 +1,52 @@
 # 🧠 Multimodal AI Health Assistant Agent
 
-A modular, voice-enabled AI health assistant system built using Python, FastAPI, and LLM-style agents.  
+A modular, voice-enabled AI health assistant system built using Python, FastAPI, and agent-based architecture.  
 This project was developed as part of the **Dialogue Systems course (SS2025)** at the **University of Bonn**.
+
+---
 
 ## 🚀 Features
 
-- 🌤️ Weather Agent – Real-time weather data using OpenWeatherMap  
-- 🏃 Fitness Agent – Smart fitness advice based on weather  
-- 🥗 Nutrition Agent – Healthy meal suggestions  
-- 🧘 Wellbeing Agent – Mental wellness tips  
-- 😴 Sleep Agent – Simple sleep tracking and advice  
-- ⏰ Reminders Agent – Personal health reminders  
-- 📅 Calendar Agent – Health-related event reminders  
-- 🌐 Web Search Fallback – Generic fallback for unmatched queries  
-- 🧠 Selector Agent – Auto-routing queries to proper agents  
-- 🔊 TTS (Text-to-Speech) output using gTTS  
-- 🗃️ TinyDB for simple memory logging  
+- 🌤️ **Weather Agent** – Real-time weather data using OpenWeatherMap  
+- 🏃 **Fitness Agent** – Activity suggestions based on weather  
+- 🥗 **Nutrition Agent** – Nutrition info via `HealthcareAgent` API (USDA-calibrated)  
+- 🧘 **Wellbeing Agent** – Mental wellness tips  
+- 😴 **Sleep Agent** – Sleep analysis tips  
+- ⏰ **Reminders Agent** – Health-related reminders  
+- 📅 **Calendar Agent** – Event checking  
+- 🤒 **Symptom Checker Agent** – Suggests potential health issues  
+- 🩺 **Health Data Agent** – Logs blood pressure/pulse via TinyDB  
+- 📊 **Health Analytics Agent** – Averages vitals for each user  
+- 🌐 **Web Search Fallback** – Default response if no intent matched  
+- 🔊 **TTS Output** – Speaks response using `gTTS`  
+- 🧠 **Selector Agent** – Routes query to proper agents
+
+---
 
 ## 📦 Installation
 
-Install dependencies:
-
-```
+```bash
+git clone https://github.com/your-username/final-health-assistant.git
+cd final-health-assistant
 pip install -r requirements.txt
 ```
 
-## 🚀 Run the API
-
-Start the FastAPI server:
+### requirements.txt
 
 ```
+fastapi
+uvicorn
+requests
+gtts
+tinydb
+HealthcareAgent
+```
+
+---
+
+## 🚀 Run the API
+
+```bash
 uvicorn main:app --reload
 ```
 
@@ -39,19 +56,30 @@ Then open:
 http://127.0.0.1:8000/docs
 ```
 
-Use the POST `/query` endpoint to test the agent system.
+Use POST `/query/` endpoint to send queries.
 
-## 🧾 Example Request
+---
+
+## 🧪 Example Request
 
 ```json
 {
-  "query": "Suggest me a meal and tell me the weather in Tehran",
+  "query": "Tell me the weather and suggest a meal. Also analyze health report.",
   "location": {
     "lat": 35.7,
     "lon": 51.4
-  }
+  },
+  "user": "u1"
 }
 ```
+
+📤 Response might include:
+- 🌤️ Current weather
+- 🥗 USDA nutrition info via HealthcareAgent
+- 📊 Health summary for user `u1`
+- 🔊 Spoken response with gTTS
+
+---
 
 ## 📁 Project Structure
 
@@ -60,6 +88,7 @@ Use the POST `/query` endpoint to test the agent system.
 ├── main.py
 ├── requirements.txt
 ├── README.md
+├── health_data.json
 ├── agents/
 │   ├── weather.py
 │   ├── fitness.py
@@ -68,12 +97,17 @@ Use the POST `/query` endpoint to test the agent system.
 │   ├── sleep.py
 │   ├── reminders.py
 │   ├── calendar.py
+│   ├── symptom.py
+│   ├── health_data.py
+│   ├── health_analytics.py
 │   ├── websearch.py
 │   └── selector.py
 └── utils/
     ├── memory.py
     └── tts.py
 ```
+
+---
 
 ## 👨‍💻 Contributors
 
@@ -84,6 +118,8 @@ Use the POST `/query` endpoint to test the agent system.
 
 University of Bonn – Dialogue Systems – SS 2025
 
+---
+
 ## 📝 License
 
-This project is intended for educational and academic purposes only.
+This project is intended for educational and academic use only.
