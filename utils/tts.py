@@ -1,43 +1,48 @@
-from gtts import gTTS
 import os
-import platform
-import re
+import speech_recognition as sr
+from gtts import gTTS
+from pydub import AudioSegment
+from pydub.playback import play
 
-# لیست زبان‌های پشتیبانی‌شده
-SUPPORTED_LANGUAGES = ['en', 'de', 'fa']
 
-def detect_language(text):
+def transcribe_voice(audio_file_path: str, language: str = "en") -> str:
     """
-    تشخیص ساده زبان متن بر اساس کلمات کلیدی و حروف خاص
+    Converts speech to text using Google Speech Recognition.
+
+    Args:
+        audio_file_path (str): Path to .wav file.
+        language (str): 'en' for English, 'de' for German.
+
+    Returns:
+        str: Transcribed text or error message.
     """
-    if re.search(r'[\u0600-\u06FF]', text):  # حروف فارسی
-        return 'fa'
-    elif re.search(r'\b(und|ist|das|wetter|heute|gut)\b', text.lower()):
-        return 'de'
-    else:
-        return 'en'
-
-def speak(text, lang=None):
-    if not lang:
-        lang = detect_language(text)
-
-    if lang not in SUPPORTED_LANGUAGES:
-        print(f"⚠️ زبان '{lang}' پشتیبانی نمی‌شود. استفاده از انگلیسی.")
-        lang = 'en'
-
+    recognizer = sr.Recognizer()
+    with sr.AudioFile(audio_file_path) as source:
+        audio = recognizer.record(source)
     try:
-        tts = gTTS(text=text, lang=lang)
-        filename = "response.mp3"
-        tts.save(filename)
+        return recognizer.recognize_google(audio, language=language)
+    except sr.UnknownValueError:
+        return "❌ Speech could not be understood."
+    except sr.RequestError as e:
+        return f"❌ API request error: {e}"
 
-        system = platform.system()
-        if system == "Windows":
-            os.system(f"start {filename}")
-        elif system == "Darwin":
-            os.system(f"afplay {filename}")
-        else:
-            os.system(f"xdg-open {filename}")
 
-        print(f"🔊 متن به صدا تبدیل شد ({lang}) و پخش شد.")
+def speak_text(text: str, language: str = "en"):
+    """
+    Converts text to speech and plays the audio.
+
+    Args:
+        text (str): The text to speak.
+        language (str): Language code ('en' or 'de').
+
+    Returns:
+        None
+    """
+    try:
+        tts = gTTS(text=text, lang=language)
+        tts.save("response.mp3")
+        audio = AudioSegment.from_mp3("response.mp3")
+        play(audio)
+        os.remove("response.mp3")
     except Exception as e:
-        print(f"❌ خطای TTS: {str(e)}")
+        print(f"❌ Error in text-to-speech: {e}")
